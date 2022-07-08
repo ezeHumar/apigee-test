@@ -2,6 +2,13 @@ pipeline {
 
     agent any
 
+    parameters {
+            string(name: 'API_VERSION_P', defaultValue: 'google')
+            string(name: 'APIGEE_ORG_P', defaultValue: 'my-org')
+            string(name: 'APIGEE_TEST_ENV_P', defaultValue: 'test1')
+            choice(name: 'GCP_SA_AUTH_P', choices: [ "vm-scope", "jenkins-scope", "token" ], description: 'GCP SA/Token Scope'  )
+    }
+
     environment {
         GOOGLE_APPLICATION_CREDENTIALS= credentials('jenkis-gcp')
         // Mutliple options for setting the Apigee deployment target config:
