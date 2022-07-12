@@ -53,7 +53,6 @@ pipeline {
               println "Apigee Git: " + env.GIT_BRANCH
               println "Apigee Org: " + env.APIGEE_ORG
               println "Apigee Env: " + env.APIGEE_ENV
-              println "Proxy Deployment Suffix: " + env.APIGEE_DEPLOYMENT_SUFFIX
             }
           }
         }
@@ -70,7 +69,7 @@ pipeline {
               APIGEE_SA_TOKEN="\${APIGEE_TOKEN:-\$(gcloud auth application-default print-access-token)}"
               mvn clean install \
                 -Pgoogleapi \
-                -Denv=${APIGEE_ENV} -Dorg=${APIGEE_ORG} -Dtoken=${APIGEE_SA_TOKEN} -Ddeployment.suffix=${APIGEE_DEPLOYMENT_SUFFIX} 
+                -Denv=${APIGEE_ENV} -Dorg=${APIGEE_ORG} -Dbearer=${APIGEE_SA_TOKEN}
             '''
           }
         }
