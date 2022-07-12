@@ -57,8 +57,6 @@ pipeline {
           }
         }
 
-
-        
         stage('Deploy X/hybrid') {
           when {
             expression { env.API_VERSION ==  'google'}
@@ -88,9 +86,8 @@ pipeline {
                 """
               }
             }
-          }
+          } }
         }
- 
     }
 }
 
