@@ -67,7 +67,7 @@ pipeline {
 
             script {
               if (env.GCP_SA_AUTH == "jenkins-scope") {
-                 withCredentials([file(credentialsId: 'apigee', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                 withCredentials([file(credentialsId: 'jenkis-gcp', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                    env.SA_TOKEN=sh(script:'gcloud auth print-access-token', returnStdout: true).trim()
                  }
               } else if (env.GCP_SA_AUTH == "token") {
