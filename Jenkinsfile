@@ -63,14 +63,31 @@ pipeline {
           when {
             expression { env.API_VERSION ==  'google'}
           }
-          steps {
-            sh '''
-              #!/bin/bash
-              APIGEE_SA_TOKEN="\${APIGEE_TOKEN:-\$(gcloud auth application-default print-access-token)}"
-              mvn clean install \
-                -Pgoogleapi \
-                -Denv=${APIGEE_ENV} -Dorg=${APIGEE_ORG} -Dbearer=${APIGEE_SA_TOKEN}
-            '''
+          steps { dir( "${env.WORK_DIR}" ) {
+
+           // Token precedence: env var; jenkins-scope sa; vm-scope sa; token;
+
+            script {
+              if (env.GCP_SA_AUTH == "jenkins-scope") {
+                 withCredentials([file(credentialsId: 'apigee', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                   env.SA_TOKEN=sh(script:'gcloud auth print-access-token', returnStdout: true).trim()
+                 }
+              } else if (env.GCP_SA_AUTH == "token") {
+                 env.SA_TOKEN=env.APIGEE_TOKEN
+              } else { // vm-scope
+                 env.SA_TOKEN=sh(script:'gcloud auth application-default print-access-token', returnStdout: true).trim()
+              }
+
+             wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.SA_TOKEN, var: 'SA_TOKEN']]]) {
+               sh """
+                 mvn clean install \
+                   -Pgoogleapi \
+                   -Denv="${env.APIGEE_ENV}" \
+                   -Dbearer="${env.SA_TOKEN}" \
+                   -Dorg="${env.APIGEE_ORG}"
+                """
+              }
+            }
           }
         }
  
