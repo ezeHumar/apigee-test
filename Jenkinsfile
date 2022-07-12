@@ -6,6 +6,7 @@ pipeline {
             string(name: 'API_VERSION_P', defaultValue: 'google')
             string(name: 'APIGEE_ORG_P', defaultValue: 'my-org')
             string(name: 'APIGEE_TEST_ENV_P', defaultValue: 'test1')
+            string(name: 'WORK_DIR_P', defaultValue: '')
             choice(name: 'GCP_SA_AUTH_P', choices: [ "vm-scope", "jenkins-scope", "token" ], description: 'GCP SA/Token Scope'  )
     }
 
