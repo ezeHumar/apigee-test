@@ -25,13 +25,16 @@ pipeline {
         AUTHOR_EMAIL = '@google.com'
     }
 
-    stage('Version Check') {
+    
+    
+    stages {
+        
+        stage('Version Check') {
         steps {
             sh "npm -v"
             sh "mvn -v"
-    }}
-    
-    stages {
+        }}
+
         stage("Env Variables") {
             steps {
                 sh "printenv"
