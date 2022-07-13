@@ -6,7 +6,6 @@ pipeline {
             string(name: 'API_VERSION_P', defaultValue: 'google')
             string(name: 'APIGEE_ORG_P', defaultValue: 'my-org')
             string(name: 'APIGEE_TEST_ENV_P', defaultValue: 'test1')
-            string(name: 'WORK_DIR_P', defaultValue: '')
             choice(name: 'GCP_SA_AUTH_P', choices: [ "vm-scope", "jenkins-scope", "token" ], description: 'GCP SA/Token Scope'  )
     }
 
@@ -68,14 +67,13 @@ pipeline {
         }
 
         stage('Install dependencies') {
-          steps { dir( "${env.WORK_DIR}" ) {
-
+          steps {
               sh "npm install --silent --no-fund"
-          } }
+            }
         }
 
         stage('Static Code Analysis') {
-          steps { dir( "${env.WORK_DIR}" ) {
+          steps {
             sh "./node_modules/eslint/bin/eslint.js --format html . > eslint-out.html"
 
             publishHTML(target: [
@@ -101,7 +99,7 @@ pipeline {
             ]);
 
             sh "rm apigeelint-out.html"
-          }}
+          }
         }
 
         stage('Deploy X/hybrid') {
