@@ -73,12 +73,10 @@ pipeline {
         }
 
         stage('Static Code Analysis') {
-
-          steps{
-              sh "npm init @eslint/config"
-          }
-
           steps {
+
+            sh "npm init @eslint/config" 
+            
             sh "./node_modules/eslint/bin/eslint.js --format html . > eslint-out.html"
 
             publishHTML(target: [
