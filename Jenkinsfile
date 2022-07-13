@@ -6,6 +6,7 @@ pipeline {
             string(name: 'API_VERSION_P', defaultValue: 'google')
             string(name: 'APIGEE_ORG_P', defaultValue: 'my-org')
             string(name: 'APIGEE_TEST_ENV_P', defaultValue: 'test1')
+            string(name: 'WORK_DIR_P', defaultValue: '')
             choice(name: 'GCP_SA_AUTH_P', choices: [ "vm-scope", "jenkins-scope", "token" ], description: 'GCP SA/Token Scope'  )
     }
 
@@ -23,6 +24,12 @@ pipeline {
         APIGEE_DEPLOYMENT_SUFFIX='jenkis'
         AUTHOR_EMAIL = '@google.com'
     }
+
+    stage('Version Check') {
+        steps {
+            sh "npm -v"
+            sh "mvn -v"
+    }}
     
     stages {
         stage("Env Variables") {
@@ -55,6 +62,43 @@ pipeline {
               println "Apigee Env: " + env.APIGEE_ENV
             }
           }
+        }
+
+        stage('Install dependencies') {
+          steps { dir( "${env.WORK_DIR}" ) {
+
+              sh "npm install --silent --no-fund"
+          } }
+        }
+
+        stage('Static Code Analysis') {
+          steps { dir( "${env.WORK_DIR}" ) {
+            sh "./node_modules/eslint/bin/eslint.js --format html . > eslint-out.html"
+
+            publishHTML(target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: false,
+              keepAll: false,
+              reportDir: ".",
+              reportFiles: 'eslint-out.html',
+              reportName: 'ESLint Report'
+            ]);
+
+            sh "rm eslint-out.html"
+
+            sh "npm run apigeelint > apigeelint-out.html"
+
+            publishHTML(target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: false,
+              keepAll: false,
+              reportDir: ".",
+              reportFiles: 'apigeelint-out.html',
+              reportName: 'Apigeelint Report'
+            ]);
+
+            sh "rm apigeelint-out.html"
+          }}
         }
 
         stage('Deploy X/hybrid') {
