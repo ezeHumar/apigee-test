@@ -4,13 +4,22 @@
     "description": "Sample Proxy for CI/CD Reference",
     "author": "danistrebel",
     "scripts": {
-      "lint": "npm run eslint && npm run apigeelint",
-      "eslint": "eslint --format html .",
-      "apigeelint": "apigeelint -s ./apiproxy -f html.js -e PO025,PO013"
+        "test": "npm run unit-test && npm run integration-test",
+        "unit-test": "nyc --reporter=html mocha --recursive --timeout 5000 \"./test/unit/*.js\"",
+        "integration-test": "cucumber-js ./test/integration",
+        "lint": "npm run eslint && npm run apigeelint",
+        "eslint": "eslint --format html .",
+        "apigeelint": "apigeelint -s ./apiproxy -f html.js -e PO025,PO013"
     },
     "devDependencies": {
-      "apigeelint": "^2.13.0",
-      "eslint": "^7.0.0",
-      "eslint-config-prettier": "^6.11.0"
+        "@cucumber/cucumber": "^7.3.0",
+        "apickli": "^3.0.1",
+        "apigeelint": "^2.13.0",
+        "eslint": "^7.0.0",
+        "eslint-config-prettier": "^6.11.0",
+        "mocha": "^7.2.0",
+        "nyc": "^15.1.0",
+        "prettier": "^2.0.5",
+        "sinon": "^9.0.2"
     }
   }
