@@ -135,7 +135,7 @@ pipeline {
 
         stage('Functional Test') {
           steps {
-            sh "node ./node_modules/.bin/cucumber-js ./target/test/integration --format json:./target/reports.json"
+            sh "node ./node_modules/.bin/cucumber-js ./test/features --format json:./target/reports.json"
           }
         }
     }
